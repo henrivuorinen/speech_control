@@ -44,7 +44,7 @@ def recognize_speech():
         audio = recognizer.record(source)
 
     try:
-        command = recognizer.recognize_google(audio).lower()
+        command = recognizer.recognize_google(audio, language='fi-FI').lower()
         print("Simulated speech recognized:", command)
         return command
     except sr.UnknownValueError:
@@ -54,7 +54,7 @@ def recognize_speech():
         print(f"Error making the request; {e}")
         return None
 
-"""def run_voice_control():
+def run_voice_control():
     arduino_port = 'mock'
     bluetooth_controller = BluetoothController(port=arduino_port)
 
@@ -64,4 +64,4 @@ def recognize_speech():
             bluetooth_controller.send_data(command)
 
 if __name__ == "__main__":
-    run_voice_control()"""
+    run_voice_control()

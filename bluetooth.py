@@ -1,5 +1,6 @@
 import serial
 import serial.tools.list_ports
+import logging
 
 class BluetoothController:
     def __init__(self, port=None, baud_rate=9600):
@@ -8,6 +9,10 @@ class BluetoothController:
 
         if port is not None:
             self.open_serial_port(port)
+        else:
+            self.open_serial_port()
+
+        self.logger = logging.getLogger("BluetoothController")
 
     def open_serial_port(self, port):
         if port == 'mock':
@@ -18,7 +23,7 @@ class BluetoothController:
 
         available_ports = [port.device for port in serial.tools.list_ports.comports()]
         if not available_ports:
-            print("No available serial ports.")
+            self.logger.error("No available serial ports")
             return False
 
         # Choose the first available port (you may need to adapt this logic based on your setup)
@@ -26,40 +31,42 @@ class BluetoothController:
 
         try:
             self.ser = serial.Serial(chosen_port, self.baud_rate, timeout=1)
-            print(f"Serial port opened: {chosen_port}")
+            self.logger.info(f"Serial port opened: {chosen_port}")
             return True
         except serial.SerialException as e:
-            print(f"Error opening serial port: {e}")
+            self.logger.error(f"Error opening serial port: {e}")
             self.ser = None
             return False
 
     def send_data(self, data):
         if self.ser is None:
-            print("Serial port is not open. Cannot send data.")
+            self.logger.warn("Serial port not open. Can't send data")
             return
 
         try:
             self.ser.write(data.encode())
         except serial.SerialException as e:
-            print(f"Error sending data over serial port: {e}")
+            self.logger.error(f"Error sending data over serial port: {e}")
 
     def close_serial_port(self):
         if self.ser is not None:
             self.ser.close()
-            print("Serial port closed.")
+            self.logger.info("Serial port closed")
 
 
 class MockSerial:
     def __init__(self):
         self.data_buffer = b""
+        #Add logger attribute
+        self.logger = logging.getLogger("MockSerial") 
 
     def write(self, data):
-        print(f"MockSerial: Data sent: {data}")
+        self.logger.info(f"MockSerial: Data sent: {data}")
         # You can simulate the behavior of the Arduino response in the mock class
         self.data_buffer += data
         if b"\n" in self.data_buffer:
             received_data, self.data_buffer = self.data_buffer.split(b"\n", 1)
-            print(f"MockSerial: Data received: {received_data.decode()}")
+            self.logger.info(f"MockSerial: Data recieved: {received_data.decode()}")
 
     def close(self):
-        print("MockSerial: Closed.")
+        self.logger.info("MockSerial: Closed")
