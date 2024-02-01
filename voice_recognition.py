@@ -2,6 +2,8 @@ import speech_recognition as sr
 import pyaudio
 import wave
 
+from bluetooth import BluetoothController
+
 def record_audio(filename="dummy.wav", duration=5):
     p = pyaudio.PyAudio()
 
