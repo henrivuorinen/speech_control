@@ -3,6 +3,12 @@
 In this project there will be a python code to recognize speech, process the
 input and send desired data to Arduino platform via bluetooth link.
 
+Check in your IDE that you have all the necessary libraries and packages installed.
+
+## Running without Docker
+
+You need to install flac if you use macbook, that is easily done via homebrew `brew install flac`
+
 ## Running the project in Docker
 
 To build and run the docker image excute
