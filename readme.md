@@ -9,6 +9,15 @@ Check in your IDE that you have all the necessary libraries and packages install
 
 You need to install flac if you use macbook, that is easily done via homebrew `brew install flac`
 
+Go into the main directory and run `python3 main.py`. This shoud start the main.py. When using the MockSerial for mocking the bluetooth connection, you should see output something like this:
+
+```Mock serial port opened.
+Recording dummy.wav...
+Recording dummy.wav complete.
+Simulating speech input. Recognizing...
+Simulated speech recognized: turn on desktop the mountain
+```
+
 ## Running the project in Docker
 
 To build and run the docker image excute
