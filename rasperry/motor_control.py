@@ -69,7 +69,11 @@ def turn_right(speed):
 
 # Function to turn left
 def turn_left(speed):
-    control_motors(-speed, speed)
+    control_motors(-speed, 0)
+    time.sleep(1)
+    control_motors(speed, -speed)
+    time.sleep(0.5)
+    stop_motors()
 
 # Function to stop motors and cleanup GPIO
 def stop_motors():

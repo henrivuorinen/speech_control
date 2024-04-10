@@ -17,6 +17,20 @@ def run_voice_control(wifi_controller):
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
                 wifi_controller.send_data(command) # Send data to raspberry pi
             elif command == "move backward":
+                print("Moving backward!")
+                wifi_controller.send_data(command)
+            elif command == "turn left":
+                print("turning left!")
+                wifi_controller.send_data(command)
+            elif command == "turn right":
+                print("turning right!")
+                wifi_controller.send_data(command)
+            elif command == "stop":
+                print("stopping!")
+                wifi_controller.send_data(command)
+            elif command == "i set you free":
+                print("I set you free!")
+                wifi_controller.send_data(command)
 
             elif command == "shut down":
                 print("Shutting down...")
