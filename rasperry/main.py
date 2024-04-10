@@ -26,6 +26,8 @@ MAX_DISTANCE = 15
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Main")
 
+obstacle_detected = False
+
 def get_distance():
     # Trigger ultrasound sensor
     GPIO.output(TRIG_PIN, GPIO.HIGH)
@@ -43,6 +45,14 @@ def get_distance():
     # Calculate distance
     distance = pulse_duration * 17150
     return distance
+
+def check_obstacle():
+    global obstacle_detected
+    distance = get_distance()
+    if distance < MAX_DISTANCE:
+        obstacle_detected = True
+    else:
+        obstacle_detected = False
 
 def connect_to_server(ip, port, timeout=100):
     try:
@@ -64,15 +74,15 @@ def recieve_command(server_socket):
         return None
 
 def execute_command(command):
+    global obstacle_detected
     if command == "move_forward":
-        distance = get_distance()
-        if distance < MAX_DISTANCE:
+        check_obstacle()
+        if not obstacle_detected:
             move_forward(50)
-            logger.info("Move forward")
+            logger.info("Moved forward")
         else:
             stop_motors()
-            logger.info("Obstacle detected, stopping")
-        move_forward(50)
+            logger.info("Obstacle detected")
     elif command == "move_backward":
         move_backward(50)
     elif command == "turn_left":
@@ -89,6 +99,17 @@ def execute_command(command):
         stop_motors()
     else:
         logger.warning(f"Unknown command: {command}")
+
+def main_loop():
+    global obstacle_detected
+    while True:
+        # Check obstacles
+        check_obstacle()
+
+        # Execute commands
+        command = recieve_command(server_socket)
+        if command:
+            execute_command(command)
 
 if __name__ == "__main__":
     # Initialize GPIO
@@ -111,10 +132,7 @@ if __name__ == "__main__":
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
         try:
-            while True:
-                command = recieve_command(server_socket)
-                if command:
-                    execute_command(command)
+            main_loop()
         except KeyboardInterrupt:
             logger.info("Keyboard interrupt")
         finally:
