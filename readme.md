@@ -11,6 +11,11 @@ Check in your IDE that you have all the necessary libraries and packages install
 - Motor controllers: Control the movement of the vehicle's motors based on input commands.
 - Camera module: Captures live video feed for remote monitoring.
 
+## Features
+- Remote control via server-client communication
+- Autonomous navigation using ultrasonic sensor for obstacle detection and avoidance.
+- Video streaming for real-time monitoring of the vehicle's surroundings.
+
 ## Getting started
 
 ### Setting up the Raspberry Pi
@@ -25,11 +30,15 @@ Check in your IDE that you have all the necessary libraries and packages install
    ```cd raspberry```
 3. Run the main script: Execute the `main.py` script the initialize the vehicle
    ```python main.py```
-4. Start the server: run 
-```Mock serial port opened.
-Recording dummy.wav...
-Recording dummy.wav complete.
-Simulating speech input. Recognizing...
-Simulated speech recognized: turn on desktop the mountain
-```
+
+### Running the control software on laptop
+1. Clone the respository into laptop using the same `git clone ...` as before.
+2. Navigate to speech_control directory
+   ```cd speech_control```
+3. Run the main script
+    ```python control_app.py```
+
+
+This `python main.py` start the main code execution and the server.
+
 

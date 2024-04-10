@@ -1,6 +1,7 @@
 import socket
 import logging
 
+
 class WifiController:
     def __init__(self, ip_address, port):
         self.ip_address = ip_address
@@ -28,7 +29,7 @@ class WifiController:
         except Exception as e:
             self.logger.error(f"Error sending data: {e}")
 
-    def diconnect(self):
+    def disconnect(self):
         if self.socket:
             self.socket.close()
             self.logger.info("Socker connection closed")

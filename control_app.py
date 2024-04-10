@@ -2,10 +2,11 @@ import time
 import os
 from stream_voice_recognition import listen_for_wake_word, initialize_audio, play_sound
 from wifi_controller import WifiController
+from video_stream_recognition import VideoStreamRecognition
 import sys
 
 
-def run_voice_control(wifi_controller):
+def run_voice_control(wifi_controller, video_capture):
     try:
         while True:
             command = listen_for_wake_word()
@@ -47,7 +48,10 @@ if __name__ == "__main__":
     raspberry_port = 12345
     wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
+    # Initialize the video stream
+    video_capture = VideoStreamRecognition()
+
     try:
-        run_voice_control(wifi_controller)
+        run_voice_control(wifi_controller, video_capture)
     finally:
         wifi_controller.disconnect()
