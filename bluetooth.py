@@ -3,7 +3,7 @@ import serial.tools.list_ports
 import logging
 
 class BluetoothController:
-    def __init__(self, port=None, baud_rate=9600):
+    def __init__(self, port=None, baud_rate=115200):
         self.baud_rate = baud_rate
         self.ser = None  # Initialize to None
 
@@ -26,7 +26,7 @@ class BluetoothController:
             self.logger.error("No available serial ports")
             return False
 
-        # Choose the first available port (you may need to adapt this logic based on your setup)
+        # Choose the first available port ( may need to adapt this logic based on the setup)
         chosen_port = available_ports[0]
 
         try:
@@ -57,12 +57,11 @@ class BluetoothController:
 class MockSerial:
     def __init__(self):
         self.data_buffer = b""
-        #Add logger attribute
-        self.logger = logging.getLogger("MockSerial") 
+        self.logger = logging.getLogger("MockSerial")
 
     def write(self, data):
         self.logger.info(f"MockSerial: Data sent: {data}")
-        # You can simulate the behavior of the Arduino response in the mock class
+        #simulate the behavior of the Arduino response in the mock class
         self.data_buffer += data
         if b"\n" in self.data_buffer:
             received_data, self.data_buffer = self.data_buffer.split(b"\n", 1)

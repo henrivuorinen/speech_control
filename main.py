@@ -1,7 +1,10 @@
+import time
+
 from bluetooth import BluetoothController
 from stream_voice_recognition import listen_for_wake_word, initialize_audio, play_sound
 import sys
 import os
+
 
 def run_voice_control(bluetooth_controller):
     try:
@@ -16,11 +19,13 @@ def run_voice_control(bluetooth_controller):
                 bluetooth_controller.send_data(command)  # Send data to Arduino
             elif command == "shut down":
                 print("Shutting down...")
-                play_sound(os.path.join("sounds", "shutting_down.wav"))
+                play_sound(os.path.join("sounds", "shut-down.wav"))
                 bluetooth_controller.send_data(command)  # Send data to Arduino
+                time.sleep(5)
                 sys.exit()  # Stop the script
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
+
 
 if __name__ == "__main__":
     arduino_port = 'mock'  # Adjust the port as needed
