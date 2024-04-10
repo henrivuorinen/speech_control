@@ -1,14 +1,11 @@
 import cv2
-from picamera.array import PiRGBArray
-from picamera import PiCamera
-import time
-import numpy as np
-import os
+
 
 class VideoStreamRecognition:
     def __init__(self):
         # Load the pre-trained model
-        self.net = cv2.dnn.readNetFromCaffe("model/MobileNetSSD_deploy.prototxt", "model/MobileNetSSD_deploy.caffemodel")
+        self.net = cv2.dnn.readNetFromCaffe("model/MobileNetSSD_deploy.prototxt",
+                                            "model/MobileNetSSD_deploy.caffemodel")
 
         # List of class labels
         self.CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
@@ -16,18 +13,17 @@ class VideoStreamRecognition:
                         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
                         "sofa", "train", "tvmonitor", "phone", "human"]
 
-        # Initialize the PiCamera
-        self.camera = PiCamera()
-        self.camera.resolution = (640, 480)
-        self.rawCapture = PiRGBArray(self.camera)
-
-        # Allow the camera to warmup
-        time.sleep(0.1)
+        # Initialize the webcam
+        self.camera = cv2.VideoCapture(0)  # Use the default webcam (index 0)
+        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     def start(self):
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
-            # Convert the frame to an array
-            frame = frame.array
+        while True:
+            ret, frame = self.camera.read()  # Read a frame from the webcam
+
+            if not ret:
+                break
 
             frame_resized = cv2.resize(frame, (300, 300))
             blob = cv2.dnn.blobFromImage(frame_resized, 0.007843, (300, 300), 127.5)
@@ -52,13 +48,10 @@ class VideoStreamRecognition:
             # display the output frame
             cv2.imshow("Object Detection", frame)
 
-            # Clear the stream in preparation for the next frame
-            self.rawCapture.truncate(0)
-
             # Break the loop if q is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
     def stop(self):
-        self.camera.close()
+        self.camera.release()  # Release the webcam
         cv2.destroyAllWindows()
