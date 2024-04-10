@@ -50,14 +50,22 @@ def control_motors(left_speed, right_speed):
 # Function to move forward
 def move_forward(speed):
     control_motors(speed, speed)
+    time.sleep(5)
+    stop_motors()
 
 # Function to move backward
 def move_backward(speed):
     control_motors(-speed, -speed)
+    time.sleep(5)
+    stop_motors()
 
 # Function to turn right
 def turn_right(speed):
+    control_motors(0, -speed)
+    time.sleep(1)
     control_motors(speed, -speed)
+    time.sleep(0.5)
+    stop_motors()
 
 # Function to turn left
 def turn_left(speed):

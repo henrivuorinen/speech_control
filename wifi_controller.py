@@ -17,18 +17,18 @@ class WifiController:
             self.logger.error(f"Error connecting to {self.ip_address}:{self.port}: {e}")
             self.socket = None
 
-        def send_data(self, data):
-            if self.socket is None:
-                self.logger.warning(f"Socket connection not established. Cannot send data")
-                return
+    def send_data(self, data):
+        if self.socket is None:
+            self.logger.warning(f"Socket connection not established. Cannot send data")
+            return
 
-            try:
-                self.socket.sendall(data.encode())
-                self.logger.info(f"Data sent: {data}")
-            except Exception as e:
-                self.logger.error(f"Error sending data: {e}")
+        try:
+            self.socket.sendall(data.encode())
+            self.logger.info(f"Data sent: {data}")
+        except Exception as e:
+            self.logger.error(f"Error sending data: {e}")
 
-        def diconnect(self):
-            if self.socket:
-                self.socket.close()
-                self.logger.info("Socker connection closed")
+    def diconnect(self):
+        if self.socket:
+            self.socket.close()
+            self.logger.info("Socker connection closed")

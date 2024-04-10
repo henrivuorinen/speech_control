@@ -1,12 +1,11 @@
 import time
-
-from bluetooth import BluetoothController
-from stream_voice_recognition import listen_for_wake_word, initialize_audio, play_sound
-import sys
 import os
+from stream_voice_recognition import listen_for_wake_word, initialize_audio, play_sound
+from wifi_controller import WifiController
+import sys
 
 
-def run_voice_control(bluetooth_controller):
+def run_voice_control(wifi_controller):
     try:
         while True:
             command = listen_for_wake_word()
@@ -16,11 +15,13 @@ def run_voice_control(bluetooth_controller):
                 # Your code to execute the "move forward" action
                 print("Moving forward!")
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
-                bluetooth_controller.send_data(command)  # Send data to Arduino
+                wifi_controller.send_data(command) # Send data to raspberry pi
+            elif command == "move backward":
+
             elif command == "shut down":
                 print("Shutting down...")
                 play_sound(os.path.join("sounds", "shut-down.wav"))
-                bluetooth_controller.send_data(command)  # Send data to Arduino
+                wifi_controller.send_data(command) # Send data to Raspberry Pi
                 time.sleep(5)
                 sys.exit()  # Stop the script
     except KeyboardInterrupt:
@@ -28,10 +29,11 @@ def run_voice_control(bluetooth_controller):
 
 
 if __name__ == "__main__":
-    arduino_port = 'mock'  # Adjust the port as needed
-    bluetooth_controller = BluetoothController(port=arduino_port)
+    raspberry_ip = "192.168.1.100" # Replace this with real one
+    raspberry_port = 12345
+    wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
     try:
-        run_voice_control(bluetooth_controller)
+        run_voice_control(wifi_controller)
     finally:
-        bluetooth_controller.close_serial_port()
+        wifi_controller.disconnect()
