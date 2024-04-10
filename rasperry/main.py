@@ -117,10 +117,6 @@ if __name__ == "__main__":
     GPIO.setup(TRIG_PIN, GPIO.OUT)
     GPIO.setup(ECHO_PIN, GPIO.IN)
 
-    # Start obstacle avoidance thread
-    avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
-    avoidance_thread.start()
-
     # Start server in a separate thread
     server_thread = threading.Thread(target=start_server())
     server_thread.start()

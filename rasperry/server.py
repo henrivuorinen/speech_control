@@ -1,34 +1,57 @@
 import socket
+import threading
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def handle_client(client_socket, addr):
+    # Receive data from the client
+    try:
+        data = client_socket.recv(1024).decode().strip()
+        logger.info(f"Received data from {addr}: {data}")
+
+        # Process the received data (implement your logic here)
+
+        # Send response back to the client
+        response = "Data received"
+        client_socket.sendall(response.encode())
+    except Exception as e:
+        logger.error(f"Error handling client {addr}: {e}")
+    finally:
+        # Close the connection
+        client_socket.close()
+        logger.info(f"Closed connection with {addr}")
 
 def start_server():
     # Set the IP address and port to listen on
-    HOST = '0.0.0.0' # Listen on all available network interfaces
+    HOST = '0.0.0.0'  # Listen on all available network interfaces
     PORT = 12345
 
     # Create socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to the address and port
-    server_socket.bind((HOST, PORT))
+    try:
+        # Bind the socket to the address and port
+        server_socket.bind((HOST, PORT))
 
-    # Listen for incoming connections
-    server_socket.listen()
+        # Listen for incoming connections
+        server_socket.listen()
 
-    print(f"Server is listening on {HOST}:{PORT}")
+        logger.info(f"Server is listening on {HOST}:{PORT}")
 
-    while True:
-        # Accept a new connection
-        client_socket, addr = server_socket.accept()
-        print(f"Connected by: {addr}")
+        while True:
+            # Accept a new connection
+            client_socket, addr = server_socket.accept()
+            logger.info(f"Connected by: {addr}")
 
-        # Receive data
-        data = client_socket.recv(1024).decode().strip()
+            # Handle the client in a separate thread
+            client_thread = threading.Thread(target=handle_client, args=(client_socket, addr))
+            client_thread.start()
 
-        # Process the received data
-
-        # Send response back
-        response = "Data received"
-        client_socket.sendall(response.encode())
-
-        # Close the connection
-        client_socket.close()
+    except Exception as e:
+        logger.error(f"Error starting server: {e}")
+    finally:
+        # Close the server socket when done
+        server_socket.close()
