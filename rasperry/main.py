@@ -2,15 +2,18 @@ import RPi.GPIO as GPIO
 import time
 import socket
 import logging
-
-from torch.testing._internal.distributed.rpc.examples.reinforcement_learning_rpc_test import Observer
+import threading
 
 from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
+from server import start_server
+
+# Import the function responsible for video streaming
+from video_stream import video_stream
 
 # Set the IP address and port of the server
-SERVER_IP = "192.168.1.100" # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
-SERVER_PORT = 12345 #REPLACE THIS WITH THE REAL PORT
+SERVER_IP = "192.168.1.100"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
+SERVER_PORT = 12345  # REPLACE THIS WITH THE REAL PORT
 
 # Set GPIO pins for ultrasound
 TRIG_PIN = 17
@@ -45,7 +48,7 @@ def connect_to_server(ip, port, timeout=100):
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.connect((ip, port))
-        logger.info("Connected to server {ip}:{port}")
+        logger.info(f"Connected to server {ip}:{port}")
         return server_socket
     except Exception as e:
         logger.error(f"Error connecting to the server: {e}")
@@ -55,6 +58,7 @@ def recieve_command(server_socket):
     try:
         data = server_socket.recv(1024).decode("utf-8").strip()
         logger.info(f"Received command from server: {data}")
+        return data
     except Exception as e:
         logger.error(f"Error receiving command from server: {e}")
         return None
@@ -81,7 +85,23 @@ def execute_command(command):
         logger.warning(f"Unknown command: {command}")
 
 if __name__ == "__main__":
-    observer = Observer()
+    # Initialize GPIO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(TRIG_PIN, GPIO.OUT)
+    GPIO.setup(ECHO_PIN, GPIO.IN)
+
+    # Start obstacle avoidance thread
+    avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
+    avoidance_thread.start()
+
+    # Start server in a separate thread
+    server_thread = threading.Thread(target=start_server())
+    server_thread.start()
+
+    # Start video streaming in a separate thread
+    video_thread = threading.Thread(target=video_stream())
+    video_thread.start()
+
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
         try:

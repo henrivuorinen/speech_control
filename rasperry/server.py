@@ -1,34 +1,34 @@
 import socket
 
-# Set the IP address and port to listen on
-HOST = '0.0.0.0' # Listen on all available network interfaces
-PORT = 12345
+def start_server():
+    # Set the IP address and port to listen on
+    HOST = '0.0.0.0' # Listen on all available network interfaces
+    PORT = 12345
 
-# Create socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Create socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Bind the socket to the address and port
-server_socket.bind((HOST, PORT))
+    # Bind the socket to the address and port
+    server_socket.bind((HOST, PORT))
 
-# Listen for incoming connections
-server_socket.listen()
+    # Listen for incoming connections
+    server_socket.listen()
 
-print(f"Server is listening on {HOST}:{PORT}")
+    print(f"Server is listening on {HOST}:{PORT}")
 
-while True:
-    # Accept a new connection
-    client_socket, addr = server_socket.accept()
-    print(f"Connected by: {addr}")
+    while True:
+        # Accept a new connection
+        client_socket, addr = server_socket.accept()
+        print(f"Connected by: {addr}")
 
-    # Recieve data
-    data = client_socket.recv(1024).decode().strip()
+        # Receive data
+        data = client_socket.recv(1024).decode().strip()
 
-    # Process the received data
+        # Process the received data
 
+        # Send response back
+        response = "Data received"
+        client_socket.sendall(response.encode())
 
-    # Send response back
-    response = "Data received"
-    client_socket.sendall(response.encode())
-
-    # Close the connection
-    client_socket.close()
+        # Close the connection
+        client_socket.close()
