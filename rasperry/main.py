@@ -9,7 +9,7 @@ from motor_control import move_forward, move_backward, turn_left, turn_right, st
 from server import start_server
 
 # Import the function responsible for video streaming
-from video_stream import video_stream, start_video_stream, stop_video_stream
+# from video_stream import video_stream, start_video_stream, stop_video_stream
 
 # Set the IP address and port of the server
 SERVER_IP = "192.168.1.100"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
@@ -91,10 +91,10 @@ def execute_command(command):
         turn_right(50)
     elif command == "i set you free":
         obstacle_avoidance_main()
-    elif command == "start video":
-        start_video_stream()
-    elif command == "stop video":
-        stop_video_stream()
+    #elif command == "start video":
+    #    start_video_stream()
+    #elif command == "stop video":
+    #    stop_video_stream()
     elif command == "stop":
         stop_motors()
     else:
@@ -122,8 +122,8 @@ if __name__ == "__main__":
     server_thread.start()
 
     # Start video streaming in a separate thread
-    video_thread = threading.Thread(target=video_stream())
-    video_thread.start()
+    # video_thread = threading.Thread(target=video_stream())
+    # video_thread.start()
 
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
