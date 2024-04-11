@@ -4,11 +4,11 @@ import time
 # Define GPIO pins for motor control
 # Adjust these pin numbers according to your actual wiring
 # Left wheel
-IN1_LEFT = 23
-IN2_LEFT = 24
+IN1_LEFT = 7
+IN2_LEFT = 8
 # Right wheel
-IN3_RIGHT = 25
-IN4_RIGHT = 26
+IN3_RIGHT = 9
+IN4_RIGHT = 10
 
 # Setup GPIO mode and pins
 GPIO.setmode(GPIO.BCM)
