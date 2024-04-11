@@ -1,5 +1,8 @@
-import RPi.GPIO as GPIO
+from gpiozero import Motor, Device
 import time
+
+# Set the gpiozero pin factory to the pigpio implementation
+Device.pin_factory = None  # use system's default pin factory
 
 # Define GPIO pins for motor control
 # Adjust these pin numbers according to your actual wiring
@@ -10,42 +13,14 @@ IN2_LEFT = 8
 IN3_RIGHT = 9
 IN4_RIGHT = 10
 
-# Setup GPIO mode and pins
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(IN1_LEFT, GPIO.OUT)
-GPIO.setup(IN2_LEFT, GPIO.OUT)
-GPIO.setup(IN3_RIGHT, GPIO.OUT)
-GPIO.setup(IN4_RIGHT, GPIO.OUT)
+# Create motor objects for left and right motors
+left_motor = Motor(forward=IN1_LEFT, backward=IN2_LEFT)
+right_motor = Motor(forward=IN3_RIGHT, backward=IN4_RIGHT)
 
-# Function to control motor direction and speed
+# Function to control motors
 def control_motors(left_speed, right_speed):
-    # Left motor control
-    if left_speed > 0:
-        GPIO.output(IN1_LEFT, GPIO.HIGH)
-        GPIO.output(IN2_LEFT, GPIO.LOW)
-    elif left_speed < 0:
-        GPIO.output(IN1_LEFT, GPIO.LOW)
-        GPIO.output(IN2_LEFT, GPIO.HIGH)
-    else:
-        GPIO.output(IN1_LEFT, GPIO.LOW)
-        GPIO.output(IN2_LEFT, GPIO.LOW)
-
-    # Right motor control
-    if right_speed > 0:
-        GPIO.output(IN3_RIGHT, GPIO.HIGH)
-        GPIO.output(IN4_RIGHT, GPIO.LOW)
-    elif right_speed < 0:
-        GPIO.output(IN3_RIGHT, GPIO.LOW)
-        GPIO.output(IN4_RIGHT, GPIO.HIGH)
-    else:
-        GPIO.output(IN3_RIGHT, GPIO.LOW)
-        GPIO.output(IN4_RIGHT, GPIO.LOW)
-
-    # Adjust this part for speed control (using PWM)
-    # Example: pwm_left = GPIO.PWM(IN1_LEFT, 100)  # 100 Hz frequency
-    #          pwm_left.start(abs(left_speed))     # Start PWM with left motor speed
-    #          pwm_right = GPIO.PWM(IN3_RIGHT, 100)  # 100 Hz frequency
-    #          pwm_right.start(abs(right_speed))    # Start PWM with right motor speed
+    left_motor.value = left_speed / 100  # convert speed to a value between -1 and 1
+    right_motor.value = right_speed / 100
 
 # Function to move forward
 def move_forward(speed):
@@ -61,24 +36,21 @@ def move_backward(speed):
 
 # Function to turn right
 def turn_right(speed):
-    control_motors(0, -speed)
-    time.sleep(1)
     control_motors(speed, -speed)
+    time.sleep(1)
+    control_motors(speed, speed)
     time.sleep(0.5)
     stop_motors()
 
 # Function to turn left
 def turn_left(speed):
-    control_motors(-speed, 0)
+    control_motors(-speed, speed)
     time.sleep(1)
-    control_motors(speed, -speed)
+    control_motors(speed, speed)
     time.sleep(0.5)
     stop_motors()
 
-# Function to stop motors and cleanup GPIO
+# Function to stop motors
 def stop_motors():
-    GPIO.output(IN1_LEFT, GPIO.LOW)
-    GPIO.output(IN2_LEFT, GPIO.LOW)
-    GPIO.output(IN3_RIGHT, GPIO.LOW)
-    GPIO.output(IN4_RIGHT, GPIO.LOW)
-    GPIO.cleanup()
+    left_motor.stop()
+    right_motor.stop()

@@ -6,7 +6,7 @@ from video_stream_recognition import VideoStreamRecognition
 import sys
 
 
-def run_voice_control(wifi_controller, video_capture):
+def run_voice_control(wifi_controller):
     try:
         while True:
             command = listen_for_wake_word()
@@ -52,6 +52,6 @@ if __name__ == "__main__":
     video_capture = VideoStreamRecognition()
 
     try:
-        run_voice_control(wifi_controller, video_capture)
+        run_voice_control(wifi_controller)
     finally:
         wifi_controller.disconnect()

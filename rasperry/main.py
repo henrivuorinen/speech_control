@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+import gpiozero
 import time
 import socket
 import logging
@@ -28,23 +28,31 @@ logger = logging.getLogger("Main")
 
 obstacle_detected = False
 
+# Initialize GPIO
+trig = gpiozero.OutputDevice(TRIG_PIN)
+echo = gpiozero.DigitalInputDevice(ECHO_PIN)
+
+
 def get_distance():
     # Trigger ultrasound sensor
-    GPIO.output(TRIG_PIN, GPIO.HIGH)
+    trig.on()
     time.sleep(0.00001)
-    GPIO.output(TRIG_PIN, GPIO.LOW)
+    trig.off()
 
     # Measure the pulse duration from the echo pin
-    while GPIO.input(ECHO_PIN) == 0:
+    pulse_start = time.time()
+    while not echo.is_active:
         pulse_start = time.time()
 
-    while GPIO.input(ECHO_PIN) == 1:
+    pulse_end = time.time()
+    while echo.is_active:
         pulse_end = time.time()
 
     pulse_duration = pulse_end - pulse_start
     # Calculate distance
     distance = pulse_duration * 17150
     return distance
+
 
 def check_obstacle():
     global obstacle_detected
@@ -64,6 +72,7 @@ def connect_to_server(ip, port, timeout=100):
         logger.error(f"Error connecting to the server: {e}")
         return None
 
+
 def recieve_command(server_socket):
     try:
         data = server_socket.recv(1024).decode("utf-8").strip()
@@ -72,6 +81,7 @@ def recieve_command(server_socket):
     except Exception as e:
         logger.error(f"Error receiving command from server: {e}")
         return None
+
 
 def execute_command(command):
     global obstacle_detected
@@ -91,14 +101,15 @@ def execute_command(command):
         turn_right(50)
     elif command == "i set you free":
         obstacle_avoidance_main()
-    #elif command == "start video":
+    # elif command == "start video":
     #    start_video_stream()
-    #elif command == "stop video":
+    # elif command == "stop video":
     #    stop_video_stream()
     elif command == "stop":
         stop_motors()
     else:
         logger.warning(f"Unknown command: {command}")
+
 
 def main_loop():
     global obstacle_detected
@@ -111,12 +122,8 @@ def main_loop():
         if command:
             execute_command(command)
 
-if __name__ == "__main__":
-    # Initialize GPIO
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(TRIG_PIN, GPIO.OUT)
-    GPIO.setup(ECHO_PIN, GPIO.IN)
 
+if __name__ == "__main__":
     # Start server in a separate thread
     server_thread = threading.Thread(target=start_server())
     server_thread.start()
@@ -134,4 +141,3 @@ if __name__ == "__main__":
         finally:
             server_socket.close()
             stop_motors()
-            GPIO.cleanup()

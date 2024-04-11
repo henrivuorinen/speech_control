@@ -27,7 +27,7 @@ def listen_for_wake_word():
             print("Listening for wake word...")
             try:
                 initialize_audio()  # Initialize audio system
-                audio = recognizer.listen(source, timeout=500)  # Set a timeout (adjust as needed)
+                audio = recognizer.listen(source, timeout=5000)  # Set a timeout (adjust as needed)
                 wake_word = recognizer.recognize_google(audio).lower()
                 if wake_word == "wake up":
                     play_sound(os.path.join("sounds", "start-test.wav"))
