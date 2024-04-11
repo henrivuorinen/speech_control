@@ -1,5 +1,4 @@
-import io
-import picamera
+import cv2
 import socket
 import struct
 import time
@@ -35,13 +34,21 @@ def video_stream():
     connection = server_socket.accept()[0].makefile("wb")
 
     try:
-        # create connection to the camera module
-        with picamera.PiCamera() as camera:
-            camera.resolution = (640, 480)
-            camera.framerate = 24
-            camera.start_recording(connection, format='h264')
-            while video_streaming:
-                camera.wait_recording(1)
+        # Initialize OpenCV capture
+        cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+        while video_streaming:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Convert frame to bytes and send it over the connection
+            frame = cv2.imencode('.jpg', frame)[1].tostring()
+            connection.write(struct.pack('<L', len(frame)))
+            connection.write(frame)
+
     finally:
         connection.close()
         server_socket.close()
