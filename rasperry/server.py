@@ -1,6 +1,7 @@
 import socket
 import threading
 import logging
+from main import execute_command
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +16,13 @@ def handle_client(client_socket, addr):
                 break
             logger.info(f"Received data from {addr}: {data}")
 
-            # Process the received data (implement your logic here)
+            # Extract the command from the received data
+            command = data.strip()
+
+            print(f"Received command: {command}")
+
+            # Pass command to the execute_command function in main.py
+            execute_command(command)
 
             # Send response back to the client
             response = "Data received"
