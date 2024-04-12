@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-
 class VideoStreamRecognition:
     def __init__(self):
         self.net = cv2.dnn.readNetFromCaffe("model/MobileNetSSD_deploy.prototxt",
@@ -15,7 +14,8 @@ class VideoStreamRecognition:
     def start(self, video_stream):
         while True:
             # Receive frame from the video stream
-            frame = video_stream.read()
+            frame_bytes = video_stream.recv(1024)
+            frame = self.decode_frame(frame_bytes)
 
             # Perform object detection on the frame
             detections = self.detect_objects(frame)
@@ -26,6 +26,13 @@ class VideoStreamRecognition:
             # Break the loop if 'q' is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
+    def decode_frame(self, frame_bytes):
+        # Convert frame bytes to numpy array
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        # Decode numpy array to image
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        return frame
 
     def detect_objects(self, frame):
         frame_resized = cv2.resize(frame, (300, 300))

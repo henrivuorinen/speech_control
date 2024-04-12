@@ -40,7 +40,12 @@ def run_voice_control(wifi_controller):
             elif command == "send message":
                 message = input(f"Enter the message here: ")
                 send_written_message(wifi_controller, message)
-
+            elif command == "start video":
+                print("start recording")
+                video_capture.start()
+            elif command == "stop video":
+                print("stop recording")
+                video_capture.stop()
             elif command == "shut down":
                 print("Shutting down...")
                 play_sound(os.path.join("sounds", "shut-down.wav"))

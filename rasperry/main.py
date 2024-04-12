@@ -17,8 +17,8 @@ SERVER_IP = "192.168.1.100"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
 SERVER_PORT = 12345  # REPLACE THIS WITH THE REAL PORT
 
 # Set GPIO pins for ultrasound
-#TRIG_PIN = 17
-#ECHO_PIN = 18
+#TRIG_PIN = 4
+#ECHO_PIN = 17
 
 # Set max distance threshold for obstacle detection
 MAX_DISTANCE = 15
