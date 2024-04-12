@@ -1,7 +1,7 @@
 import socket
 import threading
 import logging
-from main import execute_command
+from command_handler import execute_command
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

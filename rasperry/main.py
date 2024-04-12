@@ -4,6 +4,7 @@ import socket
 import logging
 import threading
 
+from command_handler import execute_command
 from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from server import start_server
@@ -16,8 +17,8 @@ SERVER_IP = "192.168.1.100"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
 SERVER_PORT = 12345  # REPLACE THIS WITH THE REAL PORT
 
 # Set GPIO pins for ultrasound
-TRIG_PIN = 17
-ECHO_PIN = 18
+#TRIG_PIN = 17
+#ECHO_PIN = 18
 
 # Set max distance threshold for obstacle detection
 MAX_DISTANCE = 15
@@ -29,11 +30,10 @@ logger = logging.getLogger("Main")
 obstacle_detected = False
 
 # Initialize GPIO
-trig = gpiozero.OutputDevice(TRIG_PIN)
-echo = gpiozero.DigitalInputDevice(ECHO_PIN)
+#trig = gpiozero.OutputDevice(TRIG_PIN)
+#echo = gpiozero.DigitalInputDevice(ECHO_PIN)
 
-
-def get_distance():
+"""def get_distance():
     # Trigger ultrasound sensor
     trig.on()
     time.sleep(0.00001)
@@ -60,7 +60,7 @@ def check_obstacle():
     if distance < MAX_DISTANCE:
         obstacle_detected = True
     else:
-        obstacle_detected = False
+        obstacle_detected = False"""
 
 
 def connect_to_server(ip, port, timeout=100):
@@ -84,39 +84,11 @@ def recieve_command(server_socket):
         return None
 
 
-def execute_command(command):
-    global obstacle_detected
-    if command == "move_forward":
-        check_obstacle()
-        if not obstacle_detected:
-            move_forward(50)
-            logger.info("Moved forward")
-        else:
-            stop_motors()
-            logger.info("Obstacle detected")
-    elif command == "move_backward":
-        move_backward(50)
-    elif command == "turn_left":
-        turn_left(50)
-    elif command == "turn_right":
-        turn_right(50)
-    elif command == "i set you free":
-        obstacle_avoidance_main()
-    # elif command == "start video":
-    #    start_video_stream()
-    # elif command == "stop video":
-    #    stop_video_stream()
-    elif command == "stop":
-        stop_motors()
-    else:
-        logger.warning(f"Unknown command: {command}")
-
-
 def main_loop():
     global obstacle_detected
     while True:
         # Check obstacles
-        check_obstacle()
+        #check_obstacle()
 
         # Execute commands
         command = recieve_command(server_socket)
