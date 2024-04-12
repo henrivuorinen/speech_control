@@ -7,7 +7,7 @@ import sys
 
 
 def send_written_message(wifi_controller, message):
-    wifi_controller.send_message(message)
+    wifi_controller.send_data(message)
     print(f"Message sent to {wifi_controller}")
 
 def run_voice_control(wifi_controller):
@@ -17,7 +17,6 @@ def run_voice_control(wifi_controller):
             initialize_audio()  # Initialize audio system
 
             if command == "move forward":
-                # Your code to execute the "move forward" action
                 print("Moving forward!")
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
                 wifi_controller.send_data(command) # Send data to raspberry pi
