@@ -9,14 +9,17 @@ logger = logging.getLogger(__name__)
 def handle_client(client_socket, addr):
     # Receive data from the client
     try:
-        data = client_socket.recv(1024).decode().strip()
-        logger.info(f"Received data from {addr}: {data}")
+        while True:
+            data = client_socket.recv(1024).decode().strip()
+            if not data:
+                break
+            logger.info(f"Received data from {addr}: {data}")
 
-        # Process the received data (implement your logic here)
+            # Process the received data (implement your logic here)
 
-        # Send response back to the client
-        response = "Data received"
-        client_socket.sendall(response.encode())
+            # Send response back to the client
+            response = "Data received"
+            client_socket.sendall(response.encode())
     except Exception as e:
         logger.error(f"Error handling client {addr}: {e}")
     finally:

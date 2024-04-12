@@ -12,6 +12,8 @@ def send_written_message(wifi_controller, message):
 
 def run_voice_control(wifi_controller):
     try:
+        # Connect to server
+        wifi_controller.connect()
         while True:
             command = listen_for_wake_word()
             initialize_audio()  # Initialize audio system
@@ -50,7 +52,7 @@ def run_voice_control(wifi_controller):
 
 
 if __name__ == "__main__":
-    raspberry_ip = "192.168.1.100" # Replace this with real one
+    raspberry_ip = "192.168.1.195" # Replace this with real one
     raspberry_port = 12345
     wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
