@@ -1,9 +1,12 @@
+from email import message
+
 import gpiozero
 import time
 import socket
 import logging
 import threading
 
+import wifi_controller
 from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from server import start_server
@@ -62,6 +65,7 @@ def check_obstacle():
     else:
         obstacle_detected = False
 
+
 def connect_to_server(ip, port, timeout=100):
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,6 +87,11 @@ def recieve_command(server_socket):
         return None
 
 
+def send_written_message(wifi_controller, message):
+    wifi_controller.send_message(message)
+    print(f"Message sent to {wifi_controller}")
+
+
 def execute_command(command):
     global obstacle_detected
     if command == "move_forward":
@@ -101,6 +110,9 @@ def execute_command(command):
         turn_right(50)
     elif command == "i set you free":
         obstacle_avoidance_main()
+    elif command == "send message":
+        message = input("Enter message here: ")
+        send_written_message(wifi_controller, message)
     # elif command == "start video":
     #    start_video_stream()
     # elif command == "stop video":

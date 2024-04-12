@@ -27,8 +27,9 @@ def avoid_obstacles():
 
     # Check distance
     distance = sensor_front.distance
+    print(f"Distance to obstacle: {distance: .2f} cm")
 
-    # Determin action based on distance
+    # Determine action based on distance
     if distance < MAX_DISTANCE:
         stop_motors()
         # Choose randomly left or right turn
@@ -39,6 +40,7 @@ def avoid_obstacles():
         # Check distance after turning
         time.sleep(0.5)
         distance = sensor_front.distance
+        print(f"Distance after turning: {distance: .2f} cm")
         if distance < MAX_DISTANCE:
             # If still cant move, turn again
             if random.choice([True, False]):
