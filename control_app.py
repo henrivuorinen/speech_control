@@ -6,6 +6,10 @@ from video_stream_recognition import VideoStreamRecognition
 import sys
 
 
+def send_written_message(wifi_controller, message):
+    wifi_controller.send_message(message)
+    print(f"Message sent to {wifi_controller}")
+
 def run_voice_control(wifi_controller):
     try:
         while True:
@@ -32,6 +36,9 @@ def run_voice_control(wifi_controller):
             elif command == "i set you free":
                 print("I set you free!")
                 wifi_controller.send_data(command)
+            elif command == "send message":
+                message = input(f"Enter the message here: ")
+                send_written_message(wifi_controller, message)
 
             elif command == "shut down":
                 print("Shutting down...")
