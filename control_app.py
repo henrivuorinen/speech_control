@@ -25,6 +25,8 @@ def run_voice_control(wifi_controller):
             elif command == "move backward":
                 print("Moving backward!")
                 wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "turn left":
                 print("turning left!")
                 wifi_controller.send_data(command)

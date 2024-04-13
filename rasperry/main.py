@@ -5,7 +5,7 @@ import logging
 import threading
 
 from command_handler import execute_command
-from autonomous_movement import obstacle_avoidance_main
+#from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from server import start_server
 

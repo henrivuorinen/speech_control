@@ -29,6 +29,18 @@ class WifiController:
         except Exception as e:
             self.logger.error(f"Error sending data: {e}")
 
+    def receive_data(self):
+        if self.socket is None:
+            self.logger.warning(f"Socket connection not established. Cannot receive data")
+            return None
+        try:
+            received_data = self.socket.recv(1024).decode('utf-8').strip()
+            self.logger.info(f"Data received: {received_data}")
+            return received_data
+        except Exception as e:
+            self.logger.error(f"Error receiving data: {e}")
+            return None
+
     def disconnect(self):
         if self.socket:
             self.socket.close()
