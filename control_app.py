@@ -22,6 +22,8 @@ def run_voice_control(wifi_controller):
                 print("Moving forward!")
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
                 wifi_controller.send_data(command) # Send data to raspberry pi
+                response = wifi_controller.receive_data()
+                print("Response from server: ", response)
             elif command == "move backward":
                 print("Moving backward!")
                 wifi_controller.send_data(command)
@@ -30,28 +32,44 @@ def run_voice_control(wifi_controller):
             elif command == "turn left":
                 print("turning left!")
                 wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "turn right":
                 print("turning right!")
                 wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "stop":
                 print("stopping!")
                 wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "i set you free":
                 print("I set you free!")
                 wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "send message":
                 message = input(f"Enter the message here: ")
                 send_written_message(wifi_controller, message)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "start video":
                 print("start recording")
                 video_capture.start()
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "stop video":
                 print("stop recording")
                 video_capture.stop()
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "shut down":
                 print("Shutting down...")
                 play_sound(os.path.join("sounds", "shut-down.wav"))
                 wifi_controller.send_data(command) # Send data to Raspberry Pi
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
                 time.sleep(5)
                 sys.exit()  # Stop the script
     except KeyboardInterrupt:

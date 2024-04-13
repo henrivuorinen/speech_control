@@ -43,3 +43,4 @@ def execute_command(command):
         logger.info("Stopping")
     else:
         logger.warning(f"Unknown command: {command}")
+        stop_motors()

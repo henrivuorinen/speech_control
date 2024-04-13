@@ -25,7 +25,7 @@ def handle_client(client_socket, addr):
             execute_command(command)
 
             # Send response back to the client
-            response = "Data received"
+            response = f"Command '{command}' received and executed"
             client_socket.sendall(response.encode())
     except Exception as e:
         logger.error(f"Error handling client {addr}: {e}")
