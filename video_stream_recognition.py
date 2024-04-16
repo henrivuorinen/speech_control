@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import socket
+import struct
 
 class VideoStreamRecognition:
     def __init__(self):
@@ -11,28 +13,43 @@ class VideoStreamRecognition:
                         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
                         "sofa", "train", "tvmonitor", "phone", "human"]
 
-    def start(self, video_stream):
-        while True:
-            # Receive frame from the video stream
-            frame_bytes = video_stream.recv(1024)
-            frame = self.decode_frame(frame_bytes)
+    def start(self):
+        # Connect to the Raspberry Pi's video streaming server
+        server_ip = "10.42.0.1"  # Replace with the Raspberry Pi's IP address
+        server_port = 8000
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((server_ip, server_port))
 
-            # Perform object detection on the frame
-            detections = self.detect_objects(frame)
+        try:
+            while True:
+                # Receive frame size
+                frame_size_bytes = client_socket.recv(4)
+                frame_size = struct.unpack('<L', frame_size_bytes)[0]
 
-            # Display the frame with detected objects
-            self.display_frame(frame, detections)
+                # Receive frame data
+                frame_data = b''
+                while len(frame_data) < frame_size:
+                    chunk = client_socket.recv(frame_size - len(frame_data))
+                    if not chunk:
+                        raise RuntimeError("Incomplete frame data received")
+                    frame_data += chunk
 
-            # Break the loop if 'q' is pressed
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+                # Convert frame data to numpy array
+                frame_nparr = np.frombuffer(frame_data, np.uint8)
+                frame = cv2.imdecode(frame_nparr, cv2.IMREAD_COLOR)
 
-    def decode_frame(self, frame_bytes):
-        # Convert frame bytes to numpy array
-        nparr = np.frombuffer(frame_bytes, np.uint8)
-        # Decode numpy array to image
-        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        return frame
+                # Perform object detection on the frame
+                detections = self.detect_objects(frame)
+
+                # Display the frame with detected objects
+                self.display_frame(frame, detections)
+
+                # Break the loop if 'q' is pressed
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+
+        finally:
+            client_socket.close()
 
     def detect_objects(self, frame):
         frame_resized = cv2.resize(frame, (300, 300))

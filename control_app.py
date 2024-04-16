@@ -77,7 +77,7 @@ def run_voice_control(wifi_controller):
 
 
 if __name__ == "__main__":
-    raspberry_ip = "192.168.1.195" # Replace this with real one
+    raspberry_ip = "10.42.0.1" # Replace this with real one
     raspberry_port = 12345
     wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
