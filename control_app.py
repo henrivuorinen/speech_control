@@ -56,6 +56,7 @@ def run_voice_control(wifi_controller):
                 print("Response from server:", response)
             elif command == "start video":
                 print("start recording")
+                time.sleep(2)
                 video_capture.start()
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
