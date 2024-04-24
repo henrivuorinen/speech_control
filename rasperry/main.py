@@ -102,7 +102,7 @@ if __name__ == "__main__":
     server_thread.start()
 
     # Start video streaming in a separate thread
-    # video_thread = threading.Thread(target=video_stream())
+    # video_thread = threading.Thread(target=start_video_stream)
     # video_thread.start()
 
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
