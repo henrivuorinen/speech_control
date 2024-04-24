@@ -2,6 +2,7 @@ import cv2
 import socket
 import struct
 import threading
+import subprocess
 
 # Flag to control video streaming
 video_streaming = False
@@ -32,27 +33,24 @@ def video_stream():
     # Accept a single connection
     connection = server_socket.accept()[0]
 
-    # Initialize OpenCV capture
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    # Start libcamera-hello subprocess
+    libcamera_command = ["libcamera-hello", "--camera", "0", "-t", "0"]
+    libcamera_process = subprocess.Popen(libcamera_command, stdout=subprocess.PIPE)
 
     try:
         while video_streaming:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            # Convert frame to bytes
-            frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
+            # Read frame from libcamera-hello subprocess
+            frame_bytes = libcamera_process.stdout.read(640*480*3)
 
             # Send frame size and frame data over the connection
             connection.sendall(struct.pack('<L', len(frame_bytes)))
             connection.sendall(frame_bytes)
 
     finally:
+        # Terminate libcamera-hello subprocess
+        libcamera_process.terminate()
+
         # Release resources
-        cap.release()
         server_socket.close()
 
 # Test the video streaming functionality

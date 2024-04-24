@@ -36,7 +36,7 @@ Check in your IDE that you have all the necessary libraries and packages install
 2. Navigate to speech_control directory
    ```cd speech_control```
 3. Run the main script
-    ```python control_app.py```
+    ```python control_appgit .py```
 
 
 This `python main.py` start the main code execution and the server.
