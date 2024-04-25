@@ -1,5 +1,5 @@
-import gpiozero
-import time
+from gpiozero import Robot, Motor, DistanceSensor
+from time import sleep
 import socket
 import logging
 import threading
@@ -13,57 +13,18 @@ from server import start_server
 from video_stream import video_stream, start_video_stream, stop_video_stream
 
 # Set the IP address and port of the server
-SERVER_IP = "192.168.1.100"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
+SERVER_IP = "10.42.0.1"  # REPLACE THIS WITH THE IP ADDRESS OF THE RASP
 SERVER_PORT = 12345  # REPLACE THIS WITH THE REAL PORT
-
-# Set GPIO pins for ultrasound
-#TRIG_PIN = 4
-#ECHO_PIN = 17
-
-# Set max distance threshold for obstacle detection
-MAX_DISTANCE = 15
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Main")
 
-obstacle_detected = False
-
-# Initialize GPIO
-#trig = gpiozero.OutputDevice(TRIG_PIN)
-#echo = gpiozero.DigitalInputDevice(ECHO_PIN)
-
-"""def get_distance():
-    # Trigger ultrasound sensor
-    trig.on()
-    time.sleep(0.00001)
-    trig.off()
-
-    # Measure the pulse duration from the echo pin
-    pulse_start = time.time()
-    while not echo.is_active:
-        pulse_start = time.time()
-
-    pulse_end = time.time()
-    while echo.is_active:
-        pulse_end = time.time()
-
-    pulse_duration = pulse_end - pulse_start
-    # Calculate distance
-    distance = pulse_duration * 17150
-    return distance
-
-
-def check_obstacle():
-    global obstacle_detected
-    distance = get_distance()
-    if distance < MAX_DISTANCE:
-        obstacle_detected = True
-    else:
-        obstacle_detected = False"""
-
+robot = Robot(left=Motor(7, 8), right=Motor(9, 10))
+sensor = DistanceSensor(23, 24, max_distance=1, threshold_distance=0.2)
 
 def connect_to_server(ip, port, timeout=100):
+    global server_socket
     try:
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.connect((ip, port))
@@ -85,15 +46,24 @@ def recieve_command(server_socket):
 
 
 def main_loop():
-    global obstacle_detected
     while True:
-        # Check obstacles
-        #check_obstacle()
-
         # Execute commands
         command = recieve_command(server_socket)
         if command:
             execute_command(command)
+
+def distance_sensor_handler():
+    while True:
+        if sensor.distance < 0.2:
+            # Trigger action when an obstacle is detected
+            stop_motors()
+            logger.info("Obstacle detected. Stopping motors.")
+            sleep(0.5)
+            move_backward(1)
+            sleep(0.5)
+            turn_right(1)
+        sleep(0.5)
+
 
 
 if __name__ == "__main__":

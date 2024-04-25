@@ -1,7 +1,24 @@
-from gpiozero import Motor, Device
-import time
+from gpiozero import Motor, Robot
 
-# Set the gpiozero pin factory to the pigpio implementation
+# Create a Robot instance with the motor pins defined.
+robot = Robot(left=Motor(7, 8), right=Motor(9, 10))
+
+def move_forward(speed=1):
+    robot.forward(speed)
+
+def move_backward(speed=1):
+    robot.backward(speed)
+
+def turn_left(speed=1):
+    robot.left(speed)
+
+def turn_right(speed=1):
+    robot.left(speed)
+
+def stop_motors():
+    robot.stop()
+
+"""# Set the gpiozero pin factory to the pigpio implementation
 Device.pin_factory = None  # use system's default pin factory
 
 # Define GPIO pins for motor control
@@ -53,4 +70,4 @@ def turn_left(speed):
 # Function to stop motors
 def stop_motors():
     left_motor.stop()
-    right_motor.stop()
+    right_motor.stop()"""

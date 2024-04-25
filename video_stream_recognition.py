@@ -75,3 +75,7 @@ class VideoStreamRecognition:
 
     def stop(self):
         cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    video_stream_recognition = VideoStreamRecognition()
+    video_stream_recognition.start()
