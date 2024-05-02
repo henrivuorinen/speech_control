@@ -23,24 +23,23 @@ def listen_for_wake_word():
 
     while True:
         with sr.Microphone() as source:
-            print("Listening for wake word...")
+            print("Listening...")
             try:
                 initialize_audio()
-                if not initialized:
-                    print("Waiting for the wake word")
                 audio = recognizer.listen(source, timeout=None) # No timeout for this part
-                wake_word = recognizer.recognize_google(audio).lower()
-                if wake_word == "wake up" and not initialized:
-                    play_sound(os.path.join("sounds", "start-test.wav"))
-                    print("Wake word detected. Listening for commands")
-                    initialized = True
+                if not initialized:
+                    wake_word = recognizer.recognize_google(audio).lower()
+                    if wake_word == "wake up":
+                        play_sound(os.path.join("sounds", "start-test.wav"))
+                        print("Wake word detected. Listening for commands")
+                        initialized = True
                 elif initialized:
                     command = recognizer.recognize_google(audio).lower()
                     print("Command detected: ", command)
                     return command
             except sr.UnknownValueError:
                 if initialized:
-                    print("Failed to detect wake word. Retrying...")
+                    print("Failed to detect command. Retrying...")
                     play_error()
             except sr.RequestError as e:
                 if initialized:

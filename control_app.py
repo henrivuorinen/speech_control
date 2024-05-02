@@ -10,18 +10,26 @@ def send_written_message(wifi_controller, message):
     wifi_controller.send_data(message)
     print(f"Message sent to {wifi_controller}")
 
+
 def run_voice_control(wifi_controller):
     try:
         # Connect to server
         wifi_controller.connect()
-        while True:
-            command = listen_for_wake_word()
-            initialize_audio()  # Initialize audio system
 
+        # Initialize audio system
+        initialize_audio()
+
+        # Listen for wake word
+        print("Waiting for the wake word")
+        initialize_audio()  # Initialize audio system
+        command = listen_for_wake_word()
+
+        # If wake word detected, enter command loop
+        while True:
             if command == "move forward":
                 print("Moving forward!")
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
-                wifi_controller.send_data(command) # Send data to raspberry pi
+                wifi_controller.send_data(command)  # Send data to raspberry pi
                 response = wifi_controller.receive_data()
                 print("Response from server: ", response)
             elif command == "move backward":
@@ -69,19 +77,23 @@ def run_voice_control(wifi_controller):
             elif command == "shut down":
                 print("Shutting down...")
                 play_sound(os.path.join("sounds", "shut-down.wav"))
-                wifi_controller.send_data(command) # Send data to Raspberry Pi
+                wifi_controller.send_data(command)  # Send data to Raspberry Pi
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
                 time.sleep(5)
                 sys.exit()  # Stop the script
             else:
-                print("Uknown command:", command)
+                print("Unknown command:", command)
+
+            # Listen for the next command
+            command = listen_for_wake_word()
+
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
 
 
 if __name__ == "__main__":
-    raspberry_ip = "10.42.0.1" # Replace this with real one
+    raspberry_ip = "10.42.0.1"  # Replace this with real one
     raspberry_port = 12345
     wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
