@@ -8,7 +8,6 @@ from command_handler import execute_command
 #from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from server import start_server
-"empty sting"
 
 # Import the function responsible for video streaming
 from video_stream import video_stream, start_video_stream, stop_video_stream

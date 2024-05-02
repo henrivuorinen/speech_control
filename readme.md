@@ -1,15 +1,41 @@
 # Voice controlled Vehicle Project
 
-In this project there will be a python code to recognize speech, process the
-input and send desired data to Arduino platform via bluetooth link.
+This project contains a code to recognize speech using Google api, process
+the data and send the desired data to remote controlled vehicle powered by
+Raspberry Pi 5 board.
 
-Check in your IDE that you have all the necessary libraries and packages installed.
+## Hardware Components
+- Raspberry Pi: The central computing unit responsible for processing commands and sensor data. 
+This project used model 5.
+- Ultrasonic sensors: Used for detecting obstacles in the vehicle's path. In this project model was HC-SR04.
+- Motor controllers: Control the movement of the vehicle's motors based on input commands. This project used L298N.
+- Camera module: Captures live video feed for remote monitoring. This project used camera module 3.
 
-## Components
-- Raspberry Pi: The central computing unit responsible for processing commands and sensor data.
-- Ultrasonic sensors: Used for detecting obstacles in the vehicle's path.
-- Motor controllers: Control the movement of the vehicle's motors based on input commands.
-- Camera module: Captures live video feed for remote monitoring.
+## Software components
+### Raspberry Pi
+- _**Server**_: Responsible for opening a server to a HOST and PORT. Also responsible for handling 
+the data received through the socket.
+- **_Motor controller_**: Includes the functions to move the wheels through the L298N controller. 
+Made by using the gpiozero framework and Robot library that includes inbuild moving functions.
+- **_Command Handler_**: Has the functions to handle voice commands. All new voice commands should be
+implemented into here.
+- **_Video Stream_**: Handles the camera module. Uses libcamera functionality in Raspberry Pi to start and
+stop the video feed. This is handled in a separate thread, so it does not interfere with the other running functions
+in the project. Also this is responsible to send the video feed over the socket in real time.
+- **_Main_**: The main file that starts the project when executed. All the functions should be running through the main
+so there should be no need to separately start other services. Also the distance sensor is being handled in the main, using
+distance_sensor_handler() function, that is constantly monitoring the distance in-front of the vehicle.
+
+### Laptop
+- **_Wifi Controller_**: Component for connecting, sending data and receiving data over the wifi network. In this project
+wifi network was chosen to be the way to communicate and send data with Raspberry Pi, so this wifi controller handles this.
+- **_Video Stream Recognition_**: Uses a MobileNetSSD model to recognize objects from the live video feed received from 
+Raspberry Pi. Model vectors and configuration can be found in the **model** directory. It can be configured to use any 
+video source, but this project uses the video source recorded from the Raspberry Pi.
+- **_Stream Voice Recognition_**: Handles the voice recognition. It will listen the microphone, and when audio is detected
+it sends the audio to google api. This then processed in the code and printed out.
+- **_Control App_**: Responsible for running the laptop side of the project. It will execute the voice recognition and
+passes the commands through the wifi_controller to Raspberry Pi.
 
 ## Features
 - Remote control via server-client communication

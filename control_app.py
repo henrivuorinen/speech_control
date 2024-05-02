@@ -74,6 +74,8 @@ def run_voice_control(wifi_controller):
                 print("Response from server:", response)
                 time.sleep(5)
                 sys.exit()  # Stop the script
+            else:
+                print("Uknown command:", command)
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
 
