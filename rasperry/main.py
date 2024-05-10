@@ -3,6 +3,8 @@ from time import sleep
 import socket
 import logging
 import threading
+import speech_recognition as sr
+import subprocess
 
 from command_handler import execute_command
 #from autonomous_movement import obstacle_avoidance_main
@@ -23,6 +25,26 @@ logger = logging.getLogger("Main")
 robot = Robot(left=Motor(7, 8), right=Motor(9, 10))
 sensor = DistanceSensor(23, 24, max_distance=1, threshold_distance=0.2)
 
+def initialize_audio():
+    subprocess.call(["amixer", "-D", "pulse", "sset", "Master", "100%"])
+
+def listen_for_command():
+    recognizer = sr.Recognizer()
+
+    with sr.Microphone() as source:
+        print("Listening...")
+        try:
+            audio = recognizer.listen(source, timeout=None)
+            command = recognizer.recognize_google(audio, language="en-GB").lower()
+            print("Command received: " + command)
+            return command
+        except sr.UnknownValueError:
+            print("Failed to recognize command.")
+            return None
+        except sr.RequestError as e:
+            print(f"Error making the request: {e}")
+            return None
+
 def connect_to_server(ip, port, timeout=100):
     global server_socket
     try:
@@ -35,20 +57,20 @@ def connect_to_server(ip, port, timeout=100):
         return None
 
 
-def recieve_command(server_socket):
+"""def recieve_command(server_socket):
     try:
         data = server_socket.recv(1024).decode("utf-8").strip()
         logger.info(f"Received command from server: {data}")
         return data
     except Exception as e:
         logger.error(f"Error receiving command from server: {e}")
-        return None
+        return None"""
 
 
 def main_loop():
     while True:
         # Execute commands
-        command = recieve_command(server_socket)
+        command = listen_for_command()
         if command:
             execute_command(command)
 
@@ -78,7 +100,13 @@ if __name__ == "__main__":
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
         try:
-            main_loop()
+            initialize_audio()
+
+            while True:
+                command = listen_for_command()
+                if command:
+                    execute_command(command)
+
         except KeyboardInterrupt:
             logger.info("Keyboard interrupt")
         finally:

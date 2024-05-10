@@ -7,6 +7,10 @@ from video_stream import start_video_stream, stop_video_stream
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def stop_autonomous_movement():
+    global autonomous_movement_enabled
+    autonomous_movement_enabled = False
+
 def execute_command(command):
     global obstacle_detected
     if command == "move forward":
@@ -33,6 +37,9 @@ def execute_command(command):
     elif command == ("stop"):
         stop_motors()
         logger.info("Stopping")
+    elif command == ("stay"):
+        stop_autonomous_movement()
+        logger.info("Stopping autonomous movement")
     else:
         logger.warning(f"Unknown command: {command}")
         stop_motors()
