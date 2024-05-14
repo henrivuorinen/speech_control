@@ -11,27 +11,27 @@ def stop_autonomous_movement():
 
 def stop_and_back():
     stop_motors()
-    move_backward(50)
+    move_backward(0.7)
     sleep(1)
     stop_motors()
 
 def avoid_obstacles():
-    move_forward()  # Start moving forward
+    move_forward(0.7)  # Start moving forward
     sleep(0.5)   # Allow time for the car to start moving
 
     while True:
         # Check distance
         distance = sensor.distance
-        print(f"Distance to obstacle: {distance: .2f} cm")
+        print(f"Distance to obstacle: {distance: .2f} m")
 
         # Determine action based on distance
         if distance < sensor.max_distance:
             stop_motors()
             # Choose randomly left or right turn
             if random.choice([True, False]):
-                turn_left(50)
+                turn_left(0.6)
             else:
-                turn_right(50)
+                turn_right(0.6)
             # Check distance after turning
             sleep(0.5)
             distance = sensor.distance
@@ -39,9 +39,9 @@ def avoid_obstacles():
             if distance < sensor.max_distance:
                 # If still can't move, turn again
                 if random.choice([True, False]):
-                    turn_left(50)
+                    turn_left(0.6)
                 else:
-                    turn_right(50)
+                    turn_right(0.6)
 
 
 def obstacle_avoidance_main():

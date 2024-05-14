@@ -10,16 +10,16 @@ logger = logging.getLogger(__name__)
 def execute_command(command):
     global obstacle_detected
     if command == "move forward":
-        move_forward()
+        move_forward(0.7)
         logger.info("Moving forward")
     elif command == "move backward":
-        move_backward()
+        move_backward(0.7)
         logger.info("Moving backwards")
     elif command == "turn left":
-        turn_left()
+        turn_left(0.6)
         logger.info("Turning left")
     elif command == "turn right":
-        turn_right()
+        turn_right(0.6)
         logger.info("Turning right")
     elif command == ("set free"):
         obstacle_avoidance_main()

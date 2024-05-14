@@ -81,7 +81,7 @@ def run_voice_control(wifi_controller):
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
                 time.sleep(5)
-                sys.exit()  # Stop the script
+                break
             else:
                 print("Unknown command:", command)
 

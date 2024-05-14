@@ -44,6 +44,13 @@ passes the commands through the wifi_controller to Raspberry Pi.
 
 ## Getting started
 
+### Networking the raspberry pi
+You need to create a hotspot in the raspberry pi that you connect the laptop. This is done in the wifi
+setting settings. Once you have created the hotspot in the raspberry pi you need to connect the laptop to 
+that hotspot. Then you can run the control software successfully in the laptop and connect to raspberry. Note
+that if this is not made, there is no way that the wifi_controller can connect the laptop to raspberry pi, it 
+is not enough that they are in the same wifi network at this point. This maybe fixed in the future.
+
 ### Setting up the Raspberry Pi
 1. Hardware setup: Connect all necessary components to the Raspberry Pi according to the given diagrams.
 2. Software installation:
@@ -57,12 +64,19 @@ passes the commands through the wifi_controller to Raspberry Pi.
 3. Run the main script: Execute the `main.py` script the initialize the vehicle
    ```python main.py```
 
+#### Running features separately
+There are testing files for most of the features. For example if you want to test the autnonmous
+movement, you can just execute ```python test_autonomous_movement.py```. This will start only the 
+autonomous movement script, so that is possible to test. The ```robby.py``` is also ment for testing
+the movements with a simple script.
+
 ### Running the control software on laptop
 1. Clone the respository into laptop using the same `git clone ...` as before.
 2. Navigate to speech_control directory
    ```cd speech_control```
 3. Run the main script
-    ```python control_appgit .py```
+    ```python control_app.py```
+
 
 
 This `python main.py` start the main code execution and the server.

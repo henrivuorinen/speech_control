@@ -31,26 +31,31 @@ def video_stream():
     server_socket.listen(0)
 
     # Accept a single connection
-    connection = server_socket.accept()[0]
-
-    # Start libcamera-hello subprocess
-    libcamera_command = ["libcamera-hello", "--camera", "0", "-t", "0"]
-    libcamera_process = subprocess.Popen(libcamera_command, stdout=subprocess.PIPE)
-
     try:
-        while video_streaming:
-            # Read frame from libcamera-hello subprocess
-            frame_bytes = libcamera_process.stdout.read(640*480*3)
+        connection = server_socket.accept()[0]
 
-            # Send frame size and frame data over the connection
-            connection.sendall(struct.pack('<L', len(frame_bytes)))
-            connection.sendall(frame_bytes)
+        # Start libcamera-hello subprocess
+        libcamera_command = ["libcamera-hello", "--camera", "0", "-t", "0"]
+        libcamera_process = subprocess.Popen(libcamera_command, stdout=subprocess.PIPE)
 
-    finally:
-        # Terminate libcamera-hello subprocess
-        libcamera_process.terminate()
+        try:
+            while video_streaming:
+                # Read frame from libcamera-hello subprocess
+                frame_bytes = libcamera_process.stdout.read(640*480*3)
 
-        # Release resources
+                # Send frame size and frame data over the connection
+                connection.sendall(struct.pack('<L', len(frame_bytes)))
+                connection.sendall(frame_bytes)
+        except Exception as e:
+            print(f"An error occurred during video streaming: {e}")
+        finally:
+            # Terminate libcamera-hello subprocess
+            libcamera_process.terminate()
+
+            # Release resources
+            connection.close()
+    except Exception as e:
+        print(f"An error occurred while accepting connection: {e}")
         server_socket.close()
 
 # Test the video streaming functionality

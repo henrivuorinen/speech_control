@@ -5,7 +5,7 @@ import logging
 import threading
 
 from command_handler import execute_command
-#from autonomous_movement import obstacle_avoidance_main
+from autonomous_movement import obstacle_avoidance_main
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from server import start_server
 
@@ -45,13 +45,6 @@ def recieve_command(server_socket):
         return None
 
 
-def main_loop():
-    while True:
-        # Execute commands
-        command = recieve_command(server_socket)
-        if command:
-            execute_command(command)
-
 def distance_sensor_handler():
     while True:
         if sensor.distance < 0.2:
@@ -67,18 +60,26 @@ def distance_sensor_handler():
 
 
 if __name__ == "__main__":
-    # Start server in a separate thread
-    server_thread = threading.Thread(target=start_server())
+    # Start server and video streaming in separate threads
+    server_thread = threading.Thread(target=start_server)
     server_thread.start()
 
-    # Start video streaming in a separate thread
     video_thread = threading.Thread(target=start_video_stream)
     video_thread.start()
 
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
         try:
-            main_loop()
+            # Start obstacle avoidance mechanism in a separate thread
+            obstacle_avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
+            obstacle_avoidance_thread.start()
+
+            while True:
+                # Execute commands
+                command = recieve_command(server_socket)
+                if command:
+                    execute_command(command)
+
         except KeyboardInterrupt:
             logger.info("Keyboard interrupt")
         finally:
