@@ -67,6 +67,11 @@ def run_voice_control(wifi_controller):
                 send_written_message(wifi_controller, message)
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
+            elif command == "dance":
+                print("I dance!")
+                wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "start video":
                 print("start recording")
                 time.sleep(2)

@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 from autonomous_movement import obstacle_avoidance_main, stop_autonomous_movement
 #from main import get_distance, check_obstacle
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
@@ -18,15 +19,27 @@ def execute_command(command):
     elif command == "turn left":
         turn_left(0.6)
         logger.info("Turning left")
+        sleep(0.2)
+        stop_motors()
     elif command == "turn right":
         turn_right(0.6)
         logger.info("Turning right")
+        sleep(0.2)
+        stop_motors()
     elif command == ("set free"):
         obstacle_avoidance_main()
         logger.info("Going freely")
     elif command == ("stop moving"):
         stop_autonomous_movement()
         logger.info("Stopping movement")
+    elif command == ("dance"):
+        turn_left(0.6)
+        logger.info("dancing")
+        sleep(5)
+        stop_motors()
+        turn_right(0.6)
+        sleep(0.5)
+        stop_motors()
     elif command == ("start video"):
         start_video_stream()
         logger.info("Starting video stream")

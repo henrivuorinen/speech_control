@@ -30,7 +30,7 @@ def avoid_obstacles():
         print(f"Distance to obstacle: {distance: .2f} m")
 
         # Determine action based on distance
-        if distance < sensor.max_distance:
+        if distance < sensor.threshold_distance:
             stop_motors()
             # Choose randomly left or right turn
             if random.choice([True, False]):
@@ -41,7 +41,7 @@ def avoid_obstacles():
             sleep(0.5)
             distance = sensor.distance
             print(f"Distance after turning: {distance: .2f} cm")
-            if distance < sensor.max_distance:
+            if distance < sensor.threshold_distance:
                 # If still can't move, turn again
                 if random.choice([True, False]):
                     turn_left(0.6)
