@@ -1,5 +1,5 @@
 import logging
-from autonomous_movement import obstacle_avoidance_main
+from autonomous_movement import obstacle_avoidance_main, stop_autonomous_movement
 #from main import get_distance, check_obstacle
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from video_stream import start_video_stream, stop_video_stream
@@ -24,6 +24,9 @@ def execute_command(command):
     elif command == ("set free"):
         obstacle_avoidance_main()
         logger.info("Going freely")
+    elif command == ("stop moving"):
+        stop_autonomous_movement()
+        logger.info("Stopping movement")
     elif command == ("start video"):
         start_video_stream()
         logger.info("Starting video stream")

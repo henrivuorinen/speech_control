@@ -57,6 +57,11 @@ def run_voice_control(wifi_controller):
                 wifi_controller.send_data(command)
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
+            elif command == "stop moving":
+                print("I stopped moving!")
+                wifi_controller.send_data(command)
+                response = wifi_controller.receive_data()
+                print("Response from server:", response)
             elif command == "send message":
                 message = input(f"Enter the message here: ")
                 send_written_message(wifi_controller, message)

@@ -6,7 +6,12 @@ from gpiozero import DistanceSensor
 
 sensor = DistanceSensor(echo=23, trigger=24, max_distance=1, threshold_distance=0.2)
 
+#Global flag variable to control the running of autonomous movement
+autonomous_movement_enabled = True
+
 def stop_autonomous_movement():
+    global autonomous_movement_enabled
+    autonomous_movement_enabled = False
     stop_motors()
 
 def stop_and_back():
@@ -19,7 +24,7 @@ def avoid_obstacles():
     move_forward(0.7)  # Start moving forward
     sleep(0.5)   # Allow time for the car to start moving
 
-    while True:
+    while autonomous_movement_enabled:
         # Check distance
         distance = sensor.distance
         print(f"Distance to obstacle: {distance: .2f} m")
@@ -42,11 +47,13 @@ def avoid_obstacles():
                     turn_left(0.6)
                 else:
                     turn_right(0.6)
+        else:
+            move_forward(0.7) #continue moving forward
 
 
 def obstacle_avoidance_main():
     try:
-        while True:
+        while autonomous_movement_enabled: #Check the flag before continuing
             avoid_obstacles()
             sleep(0.1)
     except KeyboardInterrupt:
