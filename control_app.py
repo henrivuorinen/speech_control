@@ -52,7 +52,7 @@ def run_voice_control(wifi_controller):
                 wifi_controller.send_data(command)
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
-            elif command == "i set you free":
+            elif command == "set free":
                 print("I set you free!")
                 wifi_controller.send_data(command)
                 response = wifi_controller.receive_data()
