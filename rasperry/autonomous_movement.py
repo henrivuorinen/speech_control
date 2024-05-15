@@ -8,6 +8,7 @@ sensor = DistanceSensor(echo=23, trigger=24, max_distance=1, threshold_distance=
 
 #Global flag variable to control the running of autonomous movement
 autonomous_movement_enabled = True
+autonomous_thread = None
 
 def stop_autonomous_movement():
     global autonomous_movement_enabled
@@ -52,6 +53,8 @@ def avoid_obstacles():
 
 
 def obstacle_avoidance_main():
+    global autonomous_movement_enabled
+    autonomous_movement_enabled = True #Ensure it starts as enabled
     try:
         while autonomous_movement_enabled: #Check the flag before continuing
             avoid_obstacles()
@@ -60,8 +63,12 @@ def obstacle_avoidance_main():
         stop_motors()
 
 def start_obstacle_avoidance():
-    obstacle_avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
-    obstacle_avoidance_thread.start()
+    global autonomous_thread
+    autonomous_movement_enabled = True
+    autonomous_thread = threading.Thread(target=obstacle_avoidance_main)
+    autonomous_thread.start()
+    return autonomous_thread
 
 # Call this function to start obstacle avoidance in a separate thread
-start_obstacle_avoidance()
+"""def start_autonomous_movement():
+    start_obstacle_avoidance()"""

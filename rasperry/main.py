@@ -71,8 +71,8 @@ if __name__ == "__main__":
     if server_socket:
         try:
             # Start obstacle avoidance mechanism in a separate thread
-            obstacle_avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
-            obstacle_avoidance_thread.start()
+            #obstacle_avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
+            #obstacle_avoidance_thread.start()
 
             while True:
                 # Execute commands
