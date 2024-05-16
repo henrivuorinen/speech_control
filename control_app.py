@@ -5,13 +5,11 @@ from wifi_controller import WifiController
 from video_stream_recognition import VideoStreamRecognition
 import sys
 
-
 def send_written_message(wifi_controller, message):
     wifi_controller.send_data(message)
     print(f"Message sent to {wifi_controller}")
 
-
-def run_voice_control(wifi_controller):
+def run_voice_control(wifi_controller, video_capture):
     try:
         # Connect to server
         wifi_controller.connect()
@@ -21,11 +19,10 @@ def run_voice_control(wifi_controller):
 
         # Listen for wake word
         print("Waiting for the wake word")
-        initialize_audio()  # Initialize audio system
-        command = listen_for_wake_word()
+        command_generator = listen_for_wake_word()
 
         # If wake word detected, enter command loop
-        while True:
+        for command in command_generator:
             if command == "move forward":
                 print("Moving forward!")
                 play_sound(os.path.join("sounds", "moving_forward.wav"))
@@ -81,6 +78,7 @@ def run_voice_control(wifi_controller):
                 print("Response from server:", response)
             elif command == "stop video":
                 print("stop recording")
+                wifi_controller.send_data(command)
                 video_capture.stop()
                 response = wifi_controller.receive_data()
                 print("Response from server:", response)
@@ -95,12 +93,8 @@ def run_voice_control(wifi_controller):
             else:
                 print("Unknown command:", command)
 
-            # Listen for the next command
-            command = listen_for_wake_word()
-
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
-
 
 if __name__ == "__main__":
     raspberry_ip = "10.42.0.1"  # Replace this with real one
@@ -111,6 +105,7 @@ if __name__ == "__main__":
     video_capture = VideoStreamRecognition()
 
     try:
-        run_voice_control(wifi_controller)
+        run_voice_control(wifi_controller, video_capture)
     finally:
         wifi_controller.disconnect()
+        video_capture.stop()  # Ensure video capture stops on exit

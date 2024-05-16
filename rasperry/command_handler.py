@@ -53,6 +53,9 @@ def execute_command(command):
     elif command == "stop":
         stop_motors()
         logger.info("Stopping")
+    elif command == ("shut down"):
+        logger.info("Shutting down")
+        stop_motors()
     else:
         logger.warning(f"Unknown command: {command}")
         stop_motors()
