@@ -36,6 +36,7 @@ class VideoStreamRecognition:
                 if not frame_size_bytes:
                     break
                 frame_size = struct.unpack('<L', frame_size_bytes)[0]
+                print(f"Frame size received: {frame_size}")
 
                 # Receive frame data
                 frame_data = b''
@@ -44,10 +45,16 @@ class VideoStreamRecognition:
                     if not chunk:
                         raise RuntimeError("Incomplete frame data received")
                     frame_data += chunk
+                print(f"Frame data received: {len(frame_data)} bytes")
 
                 # Convert frame data to numpy array
                 frame_nparr = np.frombuffer(frame_data, np.uint8)
                 frame = cv2.imdecode(frame_nparr, cv2.IMREAD_COLOR)
+
+                if frame is not None:
+                    print("Frame decoded successfully")
+                else:
+                    print("Frame decoding failed")
 
                 # Perform object detection on the frame
                 detections = self.detect_objects(frame)
@@ -64,7 +71,7 @@ class VideoStreamRecognition:
 
     def detect_objects(self, frame):
         frame_resized = cv2.resize(frame, (300, 300))
-        blob = cv2.dnn.blobFromImage(frame_resized, 0.007843, (300, 300), 127.5)
+        blob = cv2.dnn.blobFromImage(frame_resized, scalefactor=0.007843, size=(300, 300), mean=(127.5, 127.5, 127.5))
         self.net.setInput(blob)
         detections = self.net.forward()
         return detections
@@ -83,6 +90,7 @@ class VideoStreamRecognition:
 
         # Display the frame
         cv2.imshow("Object Detection", frame)
+        cv2.waitKey(1)  # Ensure the frame is displayed correctly
 
     def stop(self):
         if self.running:
