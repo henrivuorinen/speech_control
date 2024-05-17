@@ -4,7 +4,7 @@ import random
 from motor_control import move_forward, move_backward, turn_left, turn_right, stop_motors
 from gpiozero import DistanceSensor
 
-sensor = DistanceSensor(echo=23, trigger=24, max_distance=1, threshold_distance=0.2)
+sensor = DistanceSensor(echo=23, trigger=24, max_distance=1, threshold_distance=0.3)
 
 #Global flag variable to control the running of autonomous movement
 autonomous_movement_enabled = True
