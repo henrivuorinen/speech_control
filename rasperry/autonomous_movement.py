@@ -50,6 +50,8 @@ def avoid_obstacles():
                     turn_right(0.6)
         else:
             move_forward(0.7) #continue moving forward
+            sleep(2)
+            stop_motors()
 
 
 def obstacle_avoidance_main():

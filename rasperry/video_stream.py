@@ -70,8 +70,10 @@ def video_stream():
                 if not frame_bytes:
                     break
 
-                # Rotate the frame data by 180 degrees
+                # Convert the frame data to a numpy array
                 frame = np.frombuffer(frame_bytes, dtype=np.uint8).reshape(480, 640, 3)  # Assuming frame dimensions are 640x480
+
+                # Rotate the frame by 180 degrees
                 rotated_frame = cv2.rotate(frame, cv2.ROTATE_180)
 
                 # Convert the rotated frame back to bytes

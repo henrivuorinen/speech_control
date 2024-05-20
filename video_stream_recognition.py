@@ -27,7 +27,11 @@ class VideoStreamRecognition:
 
     def _stream_video(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Add a print statement to verify the server IP and port
+        print(f"Attempting to connect to server at {self.server_ip}:{self.server_port}")
         self.client_socket.connect((self.server_ip, self.server_port))
+        # Add a print statement to indicate successful connection
+        print("Connection to server established")
 
         try:
             while self.running:
@@ -48,6 +52,10 @@ class VideoStreamRecognition:
                 # Convert frame data to numpy array
                 frame_nparr = np.frombuffer(frame_data, np.uint8)
                 frame = cv2.imdecode(frame_nparr, cv2.IMREAD_COLOR)
+
+                # Display the frame using OpenCV
+                cv2.imshow("Video Feed", frame)
+                cv2.waitKey(1)  # Wait for a short duration to display the frame
 
                 # Perform object detection on the frame
                 detections = self.detect_objects(frame)
