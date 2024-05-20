@@ -2,34 +2,45 @@ import cv2
 import numpy as np
 import socket
 import struct
+import threading
 
 class VideoStreamRecognition:
     def __init__(self):
         self.net = cv2.dnn.readNetFromCaffe("model/MobileNetSSD_deploy.prototxt",
                                             "model/MobileNetSSD_deploy.caffemodel")
-
         self.CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
                         "sofa", "train", "tvmonitor", "phone", "human"]
 
+        self.server_ip = "10.42.0.1"  # Replace with the Raspberry Pi's IP address
+        self.server_port = 8000
+        self.client_socket = None
+        self.running = False
+        self.thread = None
+
     def start(self):
-        # Connect to the Raspberry Pi's video streaming server
-        server_ip = "10.42.0.1"  # Replace with the Raspberry Pi's IP address
-        server_port = 8000
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect((server_ip, server_port))
+        if not self.running:
+            self.running = True
+            self.thread = threading.Thread(target=self._stream_video)
+            self.thread.start()
+
+    def _stream_video(self):
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect((self.server_ip, self.server_port))
 
         try:
-            while True:
+            while self.running:
                 # Receive frame size
-                frame_size_bytes = client_socket.recv(4)
+                frame_size_bytes = self.client_socket.recv(4)
+                if not frame_size_bytes:
+                    break
                 frame_size = struct.unpack('<L', frame_size_bytes)[0]
 
                 # Receive frame data
                 frame_data = b''
                 while len(frame_data) < frame_size:
-                    chunk = client_socket.recv(frame_size - len(frame_data))
+                    chunk = self.client_socket.recv(frame_size - len(frame_data))
                     if not chunk:
                         raise RuntimeError("Incomplete frame data received")
                     frame_data += chunk
@@ -49,7 +60,7 @@ class VideoStreamRecognition:
                     break
 
         finally:
-            client_socket.close()
+            self.client_socket.close()
 
     def detect_objects(self, frame):
         frame_resized = cv2.resize(frame, (300, 300))
@@ -74,7 +85,11 @@ class VideoStreamRecognition:
         cv2.imshow("Object Detection", frame)
 
     def stop(self):
-        cv2.destroyAllWindows()
+        if self.running:
+            self.running = False
+            if self.thread is not None:
+                self.thread.join()
+            cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     video_stream_recognition = VideoStreamRecognition()

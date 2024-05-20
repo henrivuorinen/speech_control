@@ -34,8 +34,7 @@ def connect_to_server(ip, port, timeout=100):
         logger.error(f"Error connecting to the server: {e}")
         return None
 
-
-def recieve_command(server_socket):
+def receive_command(server_socket):
     try:
         data = server_socket.recv(1024).decode("utf-8").strip()
         logger.info(f"Received command from server: {data}")
@@ -43,7 +42,6 @@ def recieve_command(server_socket):
     except Exception as e:
         logger.error(f"Error receiving command from server: {e}")
         return None
-
 
 def distance_sensor_handler():
     while True:
@@ -57,31 +55,33 @@ def distance_sensor_handler():
             turn_right(1)
         sleep(0.5)
 
-
-
 if __name__ == "__main__":
-    # Start server and video streaming in separate threads
+    # Start server in a separate thread
     server_thread = threading.Thread(target=start_server)
     server_thread.start()
-
-    video_thread = threading.Thread(target=start_video_stream)
-    video_thread.start()
 
     server_socket = connect_to_server(SERVER_IP, SERVER_PORT)
     if server_socket:
         try:
-            # Start obstacle avoidance mechanism in a separate thread
-            obstacle_avoidance_thread = threading.Thread(target=obstacle_avoidance_main)
-            obstacle_avoidance_thread.start()
-
+            # Start video streaming in a separate thread if the command is received
+            video_thread = None
             while True:
-                # Execute commands
-                command = recieve_command(server_socket)
+                command = receive_command(server_socket)
                 if command:
-                    execute_command(command)
-
+                    if command == "start video" and not video_thread:
+                        video_thread = threading.Thread(target=start_video_stream)
+                        video_thread.start()
+                    elif command == "stop video" and video_thread:
+                        stop_video_stream()
+                        video_thread.join()
+                        video_thread = None
+                    else:
+                        execute_command(command)
         except KeyboardInterrupt:
             logger.info("Keyboard interrupt")
         finally:
             server_socket.close()
             stop_motors()
+            stop_video_stream()
+            if video_thread:
+                video_thread.join()
