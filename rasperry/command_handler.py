@@ -19,14 +19,14 @@ def execute_command(command):
         move_backward(0.7)
         logger.info("Moving backwards")
     elif command == "turn left":
-        turn_left(0.6)
+        turn_left(0.7)
         logger.info("Turning left")
-        sleep(0.2)
+        sleep(0.4)
         stop_motors()
     elif command == "turn right":
-        turn_right(0.6)
+        turn_right(0.7)
         logger.info("Turning right")
-        sleep(0.2)
+        sleep(0.4)
         stop_motors()
     elif command == "set free":
         if not autonomous_thread or not autonomous_thread.is_alive():
@@ -37,12 +37,12 @@ def execute_command(command):
         stop_autonomous_movement()
         logger.info("Stopping movement")
     elif command == "dance":
-        turn_left(0.6)
+        turn_left(0.7)
         logger.info("Dancing")
         sleep(5)
         stop_motors()
-        turn_right(0.6)
-        sleep(0.5)
+        turn_right(0.7)
+        sleep(5)
         stop_motors()
     elif command == "start video":
         start_video_stream()

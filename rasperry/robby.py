@@ -2,7 +2,7 @@ from gpiozero import Robot, Motor
 
 from time import sleep
 
-robby = Robot(left=Motor(7, 8), right=Motor(9, 10))
+robby = Robot(left=Motor(9, 10), right=Motor(7, 8))
 
 for i in range(4):
     robby.forward()
