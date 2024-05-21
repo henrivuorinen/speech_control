@@ -2,26 +2,25 @@ import speech_recognition as sr
 import pygame
 import os
 
-
 def initialize_audio():
     pygame.mixer.init()
-
 
 def play_sound(file_path):
     pygame.mixer.music.load(file_path)
     pygame.mixer.music.play()
 
-
 def play_error():
     play_sound(os.path.join("sounds", "error.wav"))
-
 
 def listen_for_wake_word():
     recognizer = sr.Recognizer()
     initialized = False
 
-    while True:
-        with sr.Microphone() as source:
+    with sr.Microphone() as source:
+        print("Adjusting for ambient noise...")
+        recognizer.adjust_for_ambient_noise(source, duration=1)  # Adjust for ambient noise once
+
+        while True:
             print("Listening...")
             try:
                 initialize_audio()
@@ -49,12 +48,10 @@ def listen_for_wake_word():
                     # Optionally, prompt the user to repeat the command
                     print("Please repeat the command.")
 
-
 if __name__ == "__main__":
-    # If you want to run this module independently for testing purposes
-    for command in listen_for_wake_word():
-        initialize_audio()  # Initialize audio system
+    initialize_audio()  # Initialize audio system before starting
 
+    for command in listen_for_wake_word():
         if command == "move forward":
             # Your code to execute the "move forward" action
             print("Moving forward!")
@@ -62,5 +59,4 @@ if __name__ == "__main__":
         elif command == "shut down":
             print("Shutting down...")
             play_sound(os.path.join("sounds", "shut-down.wav"))
-            # Remove the sys.exit() call to continue listening for commands
-            break
+            break  # Exit the loop to stop the program

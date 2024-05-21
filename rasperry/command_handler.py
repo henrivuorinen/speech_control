@@ -15,7 +15,7 @@ def execute_command(command):
     if command == "move forward":
         move_forward(0.7)
         logger.info("Moving forward")
-    elif command == "move backward":
+    elif command == "move backwards":
         move_backward(0.7)
         logger.info("Moving backwards")
     elif command == "turn left":
