@@ -6,10 +6,24 @@ from video_stream_recognition import VideoStreamRecognition
 import sys
 
 def send_written_message(wifi_controller, message):
+    """
+    Sends a written message to the Raspberry Pi via WiFi controller.
+
+    Args:
+        wifi_controller (WifiController): The WiFi controller instance.
+        message (str): The message to send.
+    """
     wifi_controller.send_data(message)
     print(f"Message sent to {wifi_controller}")
 
 def run_voice_control(wifi_controller, video_capture):
+    """
+    Runs the voice control loop.
+
+    Args:
+        wifi_controller (WifiController): The WiFi controller instance.
+        video_capture (VideoStreamRecognition): The video stream recognition instance.
+    """
     try:
         # Connect to server
         wifi_controller.connect()
@@ -97,8 +111,11 @@ def run_voice_control(wifi_controller, video_capture):
         print("KeyboardInterrupt: Exiting...")
 
 if __name__ == "__main__":
-    raspberry_ip = "10.42.0.1"  # Replace this with real one
+    # Replace with actual Raspberry Pi IP and port
+    raspberry_ip = "10.42.0.1"
     raspberry_port = 12345
+
+    # Create a WiFi controller instance
     wifi_controller = WifiController(ip_address=raspberry_ip, port=raspberry_port)
 
     # Initialize the video stream
@@ -107,5 +124,6 @@ if __name__ == "__main__":
     try:
         run_voice_control(wifi_controller, video_capture)
     finally:
+        # Disconnect WiFi controller and stop video capture on exit
         wifi_controller.disconnect()
-        video_capture.stop()  # Ensure video capture stops on exit
+        video_capture.stop()

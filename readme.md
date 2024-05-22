@@ -11,6 +11,13 @@ This project used model 5.
 - Motor controllers: Control the movement of the vehicle's motors based on input commands. This project used L298N.
 - Camera module: Captures live video feed for remote monitoring. This project used camera module 3.
 
+## Hardware setup
+Hardware needs to be set up according to instructions here:
+![Hardware setup](hardware.png)
+
+The design of the vehicle can be altered as needed. Also the battery can be changed into a LiPO battery, or something similar.
+
+
 ## Software components
 ### Raspberry Pi
 - _**Server**_: Responsible for opening a server to a HOST and PORT. Also responsible for handling 
@@ -76,7 +83,6 @@ the movements with a simple script.
    ```cd speech_control```
 3. Run the main script
     ```python control_app.py```
-
 
 
 This `python main.py` start the main code execution and the server.
