@@ -8,9 +8,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def handle_client(client_socket, addr):
-    # Receive data from the client
+    """
+    Function to handle communication with a connected client.
+
+    Args:
+        client_socket (socket.socket): Socket object representing the client connection.
+        addr (tuple): Tuple containing the IP address and port of the client.
+    """
     try:
         while True:
+            # Receive data from the client
             data = client_socket.recv(1024).decode().strip()
             if not data:
                 break
@@ -19,9 +26,7 @@ def handle_client(client_socket, addr):
             # Extract the command from the received data
             command = data.strip()
 
-            print(f"Received command: {command}")
-
-            # Pass command to the execute_command function in main.py
+            # Pass command to the execute_command function
             execute_command(command)
 
             # Send response back to the client
@@ -35,6 +40,9 @@ def handle_client(client_socket, addr):
         logger.info(f"Closed connection with {addr}")
 
 def start_server():
+    """
+    Function to start the socket server.
+    """
     # Set the IP address and port to listen on
     HOST = '0.0.0.0'  # Listen on all available network interfaces
     PORT = 12345

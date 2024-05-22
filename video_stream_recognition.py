@@ -6,13 +6,19 @@ import threading
 
 class VideoStreamRecognition:
     def __init__(self):
+        """
+        Initializes the VideoStreamRecognition object.
+        """
+        # Load the pre-trained model for object detection
         self.net = cv2.dnn.readNetFromCaffe("model/MobileNetSSD_deploy.prototxt",
                                             "model/MobileNetSSD_deploy.caffemodel")
+        # Define the classes for object detection
         self.CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
                         "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                         "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
                         "sofa", "train", "tvmonitor", "phone", "human"]
 
+        # Set the IP address and port of the server (Raspberry Pi)
         self.server_ip = "10.42.0.1"  # Replace with the Raspberry Pi's IP address
         self.server_port = 8000
         self.client_socket = None
@@ -20,12 +26,18 @@ class VideoStreamRecognition:
         self.thread = None
 
     def start(self):
+        """
+        Starts the video streaming and object recognition.
+        """
         if not self.running:
             self.running = True
             self.thread = threading.Thread(target=self._stream_video)
             self.thread.start()
 
     def _stream_video(self):
+        """
+        Connects to the server, receives video frames, performs object detection, and displays the frames.
+        """
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Add a print statement to verify the server IP and port
         print(f"Attempting to connect to server at {self.server_ip}:{self.server_port}")
@@ -71,6 +83,15 @@ class VideoStreamRecognition:
             self.client_socket.close()
 
     def detect_objects(self, frame):
+        """
+        Performs object detection on the input frame.
+
+        Args:
+            frame (numpy.ndarray): The input frame.
+
+        Returns:
+            numpy.ndarray: The detections.
+        """
         frame_resized = cv2.resize(frame, (300, 300))
         blob = cv2.dnn.blobFromImage(frame_resized, 0.007843, (300, 300), 127.5)
         self.net.setInput(blob)
@@ -78,6 +99,13 @@ class VideoStreamRecognition:
         return detections
 
     def display_frame(self, frame, detections):
+        """
+        Displays the frame with detected objects.
+
+        Args:
+            frame (numpy.ndarray): The input frame.
+            detections (numpy.ndarray): The detections.
+        """
         # Process the detections and draw bounding boxes on the frame
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
@@ -93,6 +121,9 @@ class VideoStreamRecognition:
         cv2.imshow("Object Detection", frame)
 
     def stop(self):
+        """
+        Stops the video streaming and object recognition.
+        """
         if self.running:
             self.running = False
             if self.thread is not None:
@@ -100,5 +131,6 @@ class VideoStreamRecognition:
             cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    # Create an instance of VideoStreamRecognition and start video streaming
     video_stream_recognition = VideoStreamRecognition()
     video_stream_recognition.start()

@@ -19,6 +19,11 @@ video_thread = None
 libcamera_process = None
 
 def start_video_stream():
+    """
+    Function to start the video stream.
+
+    This function starts a thread to handle video streaming using libcamera-hello subprocess.
+    """
     global video_streaming, video_thread
     if not video_streaming:
         video_streaming = True
@@ -29,6 +34,11 @@ def start_video_stream():
         logger.warning("Video stream is already running.")
 
 def stop_video_stream():
+    """
+    Function to stop the video stream.
+
+    This function stops the video streaming thread and terminates the libcamera-hello subprocess.
+    """
     global video_streaming, video_thread, libcamera_process
     if video_streaming:
         video_streaming = False
@@ -44,6 +54,11 @@ def stop_video_stream():
         logger.warning("Video stream is not running.")
 
 def video_stream():
+    """
+    Function to handle video streaming.
+
+    This function sets up a socket server to stream video feed from libcamera-hello subprocess.
+    """
     global video_streaming, libcamera_process
     # Create TCP/IP socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
